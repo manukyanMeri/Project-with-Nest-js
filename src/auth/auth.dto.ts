@@ -1,4 +1,5 @@
 import { IsString, Matches } from 'class-validator';
+import { MaxByteLength } from './max-byte-length.decorator';
 
 export class SignUpInput {
   @IsString()
@@ -12,6 +13,7 @@ export class SignUpInput {
     message:
       'Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters',
   })
+  @MaxByteLength(72)
   password!: string;
 }
 
@@ -20,5 +22,6 @@ export class SignInInput {
   phoneNumber!: string;
 
   @IsString()
+  @MaxByteLength(72)
   password!: string;
 }

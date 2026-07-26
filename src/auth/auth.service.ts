@@ -39,7 +39,7 @@ export class AuthService {
     });
 
     // 4 Return a token so they're immediately logged in
-    return this.generateToken(user.id, user.password);
+    return this.generateToken(user.id);
   }
 
   async signIn(input: SignInInput) {
@@ -49,7 +49,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Phone number is not registered');
     }
 
     // 2 Compare submitted password with hashed password
@@ -57,14 +57,14 @@ export class AuthService {
     const isMatch = await compare(input.password, user.password);
 
     if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Password is incorrect');
     }
 
-    return this.generateToken(user.id, user.phoneNumber);
+    return this.generateToken(user.id);
   }
 
-  private async generateToken(userId: number, password: string) {
-    const payload = { sub: userId, password };
+  private async generateToken(userId: number) {
+    const payload = { sub: userId };
     const token = await this.jwt.signAsync(payload);
     return { access_token: token };
   }
