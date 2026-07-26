@@ -6,7 +6,7 @@ import {
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { DbService } from 'src/db/db.service';
-import { SignInInput, SignUpInput } from './auth.types';
+import { SignInInput, SignUpInput } from './auth.dto';
 
 @Injectable()
 export class AuthService {
