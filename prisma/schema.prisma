@@ -8,8 +8,89 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  phoneNumber String   @unique
-  password    String
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  orders Order[]
+
+  @@map("users")
+}
+
+model Author {
+  id        Int      @id @default(autoincrement())
+  name      String
+  bio       String
+  createdAt DateTime @default(now())
+
+  books Book[]
+
+  @@map("authors")
+}
+
+model Book {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String
+  price           Decimal  @db.Decimal(10, 2)
+  publicationDate DateTime
+  createdAt       DateTime @default(now())
+
+  authorId Int
+  author   Author @relation(fields: [authorId], references: [id])
+
+  categories BookCategory[]
+  orderItems OrderItem[]
+
+  @@map("books")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  books BookCategory[]
+
+  @@map("categories")
+}
+
+model BookCategory {
+  bookId Int
+  book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([bookId, categoryId])
+  @@map("book_categories")
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  items OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+
+  orderId Int
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  bookId Int
+  book   Book @relation(fields: [bookId], references: [id])
+
+  @@map("order_items")
 }

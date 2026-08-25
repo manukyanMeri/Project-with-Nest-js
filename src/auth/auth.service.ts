@@ -19,12 +19,12 @@ export class AuthService {
     // 1 Check if the user is already exists
     const existing = await this.prisma.user.findUnique({
       where: {
-        phoneNumber: input.phoneNumber,
+        email: input.email,
       },
     });
 
     if (existing) {
-      throw new ConflictException('User with this phone number already exists');
+      throw new ConflictException('User with this email already exists');
     }
 
     // 2 Hash the password  - never store plain text passwords in the database
@@ -33,7 +33,8 @@ export class AuthService {
     // 3 Create the user
     const user = await this.prisma.user.create({
       data: {
-        phoneNumber: input.phoneNumber,
+        name: input.name,
+        email: input.email,
         password: hashedPassword,
       },
     });
@@ -43,13 +44,13 @@ export class AuthService {
   }
 
   async signIn(input: SignInInput) {
-    // 1 Find user by phone number
+    // 1 Find user by email
     const user = await this.prisma.user.findUnique({
-      where: { phoneNumber: input.phoneNumber },
+      where: { email: input.email },
     });
 
     if (!user) {
-      throw new UnauthorizedException('Phone number is not registered');
+      throw new UnauthorizedException('Email is not registered');
     }
 
     // 2 Compare submitted password with hashed password
